@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D Dot Grid</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://threejs.org/build/three.js"></script>
+    <script>
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        var geometry = new THREE.Geometry();
+        var dotMaterial = new THREE.PointsMaterial({ color: 0x888888 });
+
+        for (var x = -10; x <= 10; x += 2) {
+            for (var y = -10; y <= 10; y += 2) {
+                var dot = new THREE.Vector3(x, y, 0);
+                geometry.vertices.push(dot);
+            }
+        }
+
+        var dotSystem = new THREE.Points(geometry, dotMaterial);
+        scene.add(dotSystem);
+
+        camera.position.z = 5;
+
+        var animate = function () {
+            requestAnimationFrame(animate);
+
+            dotSystem.geometry.vertices.forEach(function (dot) {
+                dot.z = Math.sin(dot.x + dot.y + Date.now() * 0.001) * 2;
+            });
+
+            dotSystem.geometry.verticesNeedUpdate = true;
+
+            renderer.render(scene, camera);
+        };
+
+        animate();
+    </script>
+</body>
+</html>
